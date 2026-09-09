@@ -1,0 +1,6 @@
+node_modules/
+.leb2-profile/
+debug/
+*.log
+.env
+html-samples/
