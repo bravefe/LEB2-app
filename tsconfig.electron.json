@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist-electron",
+    "noEmit": false,
+    "declaration": false
+  },
+  "include": ["electron/**/*.ts", "database/**/*.ts", "playwright/**/*.ts"]
+}

@@ -1,6 +1,9 @@
 node_modules/
+dist/
+dist-electron/
 .leb2-profile/
 debug/
+.data/
 *.log
 .env
 # html-samples/
