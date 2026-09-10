@@ -1,11 +1,7 @@
 export type AssignmentStatus =
-  | "not_started"
-  | "in_progress"
-  | "submitted"
-  | "completed"
-  | "graded"
-  | "overdue"
-  | "unknown";
+  | "not submitted"
+  | "late"
+  | "submitted";
 
 export interface CourseRecord {
   id: string;

@@ -3,6 +3,7 @@ import { JSDOM } from "jsdom";
 import { parseActivities, parseCourses } from "./parser.js";
 import { selectors } from "./selectors.js";
 import type { CourseScanResult, ScanResult } from "./types.js";
+import { unfinishedStatuses } from "./status-mapper.js";
 
 export function activityUrlForCourse(courseUrl: string, courseId: string): string {
   const url = new URL(courseUrl);
@@ -34,8 +35,8 @@ export async function scanLeb2(page: Page, classListUrl: string): Promise<ScanRe
   }
 
   const activities = results.flatMap((result) => result.activities);
-  const unfinished = activities.filter((activity) => ["not_started", "in_progress", "unknown"].includes(activity.status));
-  const overdue = activities.filter((activity) => activity.status === "overdue");
+  const unfinished = activities.filter((activity) => unfinishedStatuses.includes(activity.status));
+  const overdue = activities.filter((activity) => activity.status === "late");
   return {
     scannedAt: new Date().toISOString(),
     classListUrl,

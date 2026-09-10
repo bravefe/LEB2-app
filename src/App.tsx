@@ -14,13 +14,9 @@ type Assignment = {
 type Course = { id: string; name: string; code: string | null; unfinished_count: number };
 
 const statusLabel: Record<string, string> = {
-  not_started: "Not started",
-  in_progress: "In progress",
+  "not submitted": "Not submitted",
+  late: "Late",
   submitted: "Submitted",
-  completed: "Completed",
-  graded: "Graded",
-  overdue: "Overdue",
-  unknown: "Unknown"
 };
 
 export function App() {
@@ -69,8 +65,8 @@ export function App() {
         </header>
         <p className="mb-6 text-sm text-slate-300">{message}</p>
         <section className="mb-8 grid gap-4 sm:grid-cols-3">
-          <Summary label="Unfinished" value={assignments.filter((item) => ["not_started", "in_progress", "unknown"].includes(item.status)).length} />
-          <Summary label="Overdue" value={assignments.filter((item) => item.status === "overdue").length} />
+          <Summary label="Unfinished" value={assignments.filter((item) => ["not submitted", "late"].includes(item.status)).length} />
+          <Summary label="Late" value={assignments.filter((item) => item.status === "late").length} />
           <Summary label="Courses" value={courses.length} />
         </section>
         <div className="grid gap-8 lg:grid-cols-[1fr_2fr]">
