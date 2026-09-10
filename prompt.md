@@ -182,10 +182,11 @@ After the scanner test works, build the Electron + React desktop interface.
 - **Last scan date and time** placed directly below the Scan button (e.g., `Last scan: Sep 10, 2026 at 14:35`).
 - Feedback and error alerts displayed via dismissible inline toast banners.
 
-#### 3. Filter Toggle
-- Segmented control to switch between:
-  - **Not Submitted ({count})**: Default view on open; only shows active, uncompleted assignments that are not marked as done.
-  - **All Work ({count})**: Shows all assignments (submitted, late, not submitted, and marked as done).
+#### 3. Filter Tabs (Not Submitted, By Due Date, All Work)
+- Segmented control to switch between three primary views:
+  - **Not Submitted ({count})**: Default view on open; grouped by course, showing only active, uncompleted assignments that are not marked as done.
+  - **By Due Date ({count})**: Chronologically sorted list by nearest deadline; features overdue badges, due dates with urgency styling, course code tags, and an optional "Include submitted" filter.
+  - **All Work ({count})**: Grouped by course; shows all assignments (submitted, late, not submitted, and marked as done).
 
 #### 4. Course-Grouped Assignment List
 - Hierarchical display grouped by course:

@@ -49,13 +49,29 @@ type ContextMenuState = {
   isDone: boolean;
 };
 
+type TabView = "not_submitted" | "due_date" | "all";
+
+function parseLeb2DueDate(dateStr: string | null | undefined): number {
+  if (!dateStr || dateStr === "No Due Date") return Infinity;
+  const cleaned = dateStr.replace(" at ", " ");
+  const time = new Date(cleaned).getTime();
+  return isNaN(time) ? Infinity : time;
+}
+
+function isDueDateOverdue(dateStr: string | null | undefined): boolean {
+  const time = parseLeb2DueDate(dateStr);
+  if (time === Infinity) return false;
+  return time < Date.now();
+}
+
 export function App() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [lastScan, setLastScan] = useState<LastScanInfo | null>(null);
   const [busy, setBusy] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
-  const [showAll, setShowAll] = useState(false);
+  const [tabView, setTabView] = useState<TabView>("not_submitted");
+  const [dueDateShowAll, setDueDateShowAll] = useState(false);
 
   // Custom Context Menu state
   const [contextMenu, setContextMenu] = useState<ContextMenuState>({
@@ -213,18 +229,19 @@ export function App() {
   }
 
   // Calculations
-  const notSubmittedCount = assignments.filter((item) => {
+  const notSubmittedAssignments = assignments.filter((item) => {
     const isDone = item.is_marked_done === 1 || item.course_is_marked_done === 1;
     const isUnfinished = ["not submitted", "late"].includes(item.status);
     return isUnfinished && !isDone;
-  }).length;
+  });
 
+  const notSubmittedCount = notSubmittedAssignments.length;
   const totalCoursesCount = courses.length;
 
-  // Filter assignments based on toggle
+  // Filter assignments for Course Grouped view
   const filteredAssignments = assignments.filter((item) => {
     const isDone = item.is_marked_done === 1 || item.course_is_marked_done === 1;
-    if (showAll) return true;
+    if (tabView === "all") return true;
     const isUnfinished = ["not submitted", "late"].includes(item.status);
     return isUnfinished && !isDone;
   });
@@ -239,20 +256,30 @@ export function App() {
       };
     })
     .filter((course) => {
-      if (showAll) return true;
+      if (tabView === "all") return true;
       // In not submitted mode, show courses with pending items
       return course.items.length > 0;
+    });
+
+  // Sorted by due date assignments
+  const dueDateAssignments = (dueDateShowAll ? assignments : notSubmittedAssignments)
+    .slice()
+    .sort((a, b) => {
+      const timeA = parseLeb2DueDate(a.due_at);
+      const timeB = parseLeb2DueDate(b.due_at);
+      if (timeA !== timeB) return timeA - timeB;
+      return a.title.localeCompare(b.title);
     });
 
   // Format last scan date
   const formattedLastScan = lastScan?.started_at
     ? new Date(lastScan.started_at).toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
     : "Not scanned yet";
 
   return (
@@ -338,28 +365,15 @@ export function App() {
               <span>Last scan: {formattedLastScan}</span>
             </p>
           </div>
-
-          {/* Feedback/Status Toast message */}
-          {statusMessage && (
-            <div className="mt-2.5 flex items-center justify-between rounded-md bg-slate-100 px-2.5 py-1.5 text-[11px] text-slate-600 border border-slate-200">
-              <span className="truncate">{statusMessage}</span>
-              <button
-                onClick={() => setStatusMessage(null)}
-                className="ml-2 text-slate-400 hover:text-slate-600"
-              >
-                ✕
-              </button>
-            </div>
-          )}
         </section>
 
-        {/* Filter Toggle: Not Submitted (default) vs All Work */}
-        <section className="flex items-center justify-between px-1">
-          <div className="inline-flex rounded-lg bg-slate-200/80 p-0.5 text-xs font-medium text-slate-600 shadow-inner">
+        {/* Filter Tabs: Not Submitted (default) vs By Due Date vs All Work */}
+        <section className="px-1">
+          <div className="inline-flex rounded-lg bg-slate-200/80 p-0.5 text-xs font-medium text-slate-600 shadow-inner w-full">
             <button
-              onClick={() => setShowAll(false)}
-              className={`rounded-md px-3 py-1.5 transition-all ${
-                !showAll
+              onClick={() => setTabView("not_submitted")}
+              className={`flex-1 rounded-md px-2 py-1.5 transition-all text-center ${
+                tabView === "not_submitted"
                   ? "bg-white font-semibold text-slate-900 shadow-sm"
                   : "text-slate-600 hover:text-slate-900"
               }`}
@@ -367,9 +381,19 @@ export function App() {
               Not Submitted ({notSubmittedCount})
             </button>
             <button
-              onClick={() => setShowAll(true)}
-              className={`rounded-md px-3 py-1.5 transition-all ${
-                showAll
+              onClick={() => setTabView("due_date")}
+              className={`flex-1 rounded-md px-2 py-1.5 transition-all text-center ${
+                tabView === "due_date"
+                  ? "bg-white font-semibold text-slate-900 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              By Due Date ({dueDateAssignments.length})
+            </button>
+            <button
+              onClick={() => setTabView("all")}
+              className={`flex-1 rounded-md px-2 py-1.5 transition-all text-center ${
+                tabView === "all"
                   ? "bg-white font-semibold text-slate-900 shadow-sm"
                   : "text-slate-600 hover:text-slate-900"
               }`}
@@ -377,42 +401,174 @@ export function App() {
               All Work ({assignments.length})
             </button>
           </div>
-
-          <span className="text-[11px] text-slate-400 italic">
-            Right-click to mark done
-          </span>
         </section>
 
-        {/* Grouped Course List */}
-        <div className="space-y-3 pb-8">
-          {groupedCourses.length === 0 ? (
-            <div className="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-3">
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <h3 className="text-sm font-semibold text-slate-800">
-                {!showAll ? "All caught up!" : "No activities found"}
-              </h3>
-              <p className="mt-1 text-xs text-slate-500">
-                {!showAll
-                  ? "You have no unsubmitted assignments remaining."
-                  : "Run a scan to load courses and activities from LEB2."}
-              </p>
+        {/* Content View: By Due Date OR Grouped Courses */}
+        {tabView === "due_date" ? (
+          <div className="space-y-2.5 pb-8">
+            <div className="flex items-center justify-between px-1 text-[11px] text-slate-500">
+              <span className="font-medium">Sorted by nearest deadline</span>
+              <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={dueDateShowAll}
+                  onChange={(e) => setDueDateShowAll(e.target.checked)}
+                  className="rounded border-slate-300 text-[#0088cc] focus:ring-0 text-xs"
+                />
+                <span>Include submitted</span>
+              </label>
             </div>
-          ) : (
-            groupedCourses.map((course) => {
-              const isCourseDone = course.is_marked_done === 1;
 
-              return (
-                <div
-                  key={course.id}
-                  onContextMenu={(e) => onCourseContextMenu(e, course)}
-                  className={`overflow-hidden rounded-xl border bg-white shadow-sm transition-all ${
-                    isCourseDone ? "border-slate-200 bg-slate-50/60 opacity-80" : "border-slate-200"
-                  }`}
-                >
+            {dueDateAssignments.length === 0 ? (
+              <div className="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-3">
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h3 className="text-sm font-semibold text-slate-800">
+                  {!dueDateShowAll ? "No pending deadlines!" : "No activities found"}
+                </h3>
+                <p className="mt-1 text-xs text-slate-500">
+                  {!dueDateShowAll
+                    ? "All assignments are submitted or marked done."
+                    : "Run a scan to load activities from LEB2."}
+                </p>
+              </div>
+            ) : (
+              dueDateAssignments.map((item) => {
+                const isDone = item.is_marked_done === 1 || item.course_is_marked_done === 1;
+                const isSubmitted = item.status === "submitted";
+                const isLate = item.status === "late";
+                const overdue = !isDone && !isSubmitted && isDueDateOverdue(item.due_at);
+
+                return (
+                  <div
+                    key={item.id}
+                    onContextMenu={(e) => onAssignmentContextMenu(e, item)}
+                    onClick={() => handleOpenUrl(item.url)}
+                    className={`group overflow-hidden rounded-xl border bg-white p-3 shadow-sm transition-all select-none ${
+                      item.url ? "cursor-pointer hover:border-sky-300 hover:shadow-md" : ""
+                    } ${isDone ? "border-slate-200 bg-slate-50/70 opacity-75" : overdue ? "border-rose-200/90" : "border-slate-200"}`}
+                  >
+                    {/* Top row: Course Info & Overdue Indicator */}
+                    <div className="flex items-center justify-between gap-1.5 pb-1.5 border-b border-slate-100">
+                      <div className="flex items-center gap-1.5 truncate">
+                        {item.course_code && (
+                          <span className="font-bold text-[10px] text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded border border-sky-100">
+                            {item.course_code}
+                          </span>
+                        )}
+                        <span className="text-[11px] font-medium text-slate-600 truncate">
+                          {item.course_name}
+                        </span>
+                      </div>
+
+                      {overdue && (
+                        <span className="inline-flex items-center gap-1 rounded bg-rose-100 px-1.5 py-0.5 text-[10px] font-bold text-rose-700 shrink-0">
+                          <span className="h-1.5 w-1.5 rounded-full bg-rose-600 animate-pulse" />
+                          Overdue
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Middle: Title & Done button */}
+                    <div className="flex items-start justify-between gap-2 pt-2">
+                      <div className="flex-1 min-w-0">
+                        <span className={`text-xs font-semibold leading-snug line-clamp-2 ${
+                          isDone ? "line-through text-slate-400" : "text-slate-800 group-hover:text-[#0088cc]"
+                        }`}>
+                          {item.title}
+                        </span>
+                      </div>
+
+                      {/* Quick toggle checkmark */}
+                      <button
+                        onClick={(e) => void handleToggleAssignmentDone(item.id, isDone, e)}
+                        title={isDone ? "Mark as not done" : "Mark as done"}
+                        className={`p-1 rounded shrink-0 transition-colors ${
+                          isDone
+                            ? "text-teal-600 hover:bg-teal-50"
+                            : "text-slate-300 hover:text-teal-600 hover:bg-slate-100"
+                        }`}
+                      >
+                        <svg className="h-4 w-4" fill={isDone ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Bottom details: Due Date & Status badge */}
+                    <div className="mt-2 flex flex-wrap items-center justify-between gap-1.5 pt-1 border-t border-slate-50 text-[10px]">
+                      <div className="flex items-center gap-1 text-slate-600">
+                        <svg className={`h-3 w-3 ${overdue ? "text-rose-500" : "text-slate-400"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span className={overdue ? "font-semibold text-rose-600" : "text-slate-600"}>
+                          {item.due_at ? `Due: ${item.due_at}` : "No Due Date"}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        {item.assignment_type && (
+                          <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500 border border-slate-200/70">
+                            {item.assignment_type}
+                          </span>
+                        )}
+                        {isDone ? (
+                          <span className="inline-flex items-center gap-1 rounded bg-teal-100 px-1.5 py-0.5 text-[10px] font-semibold text-teal-800">
+                            Marked Done
+                          </span>
+                        ) : isSubmitted ? (
+                          <span className="inline-flex items-center rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-800">
+                            Submitted
+                          </span>
+                        ) : isLate ? (
+                          <span className="inline-flex items-center rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">
+                            Late
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center rounded bg-rose-100 px-1.5 py-0.5 text-[10px] font-semibold text-rose-800">
+                            Not Submitted
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        ) : (
+          /* Grouped Course List */
+          <div className="space-y-3 pb-8">
+            {groupedCourses.length === 0 ? (
+              <div className="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-3">
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h3 className="text-sm font-semibold text-slate-800">
+                  {tabView === "not_submitted" ? "All caught up!" : "No activities found"}
+                </h3>
+                <p className="mt-1 text-xs text-slate-500">
+                  {tabView === "not_submitted"
+                    ? "You have no unsubmitted assignments remaining."
+                    : "Run a scan to load courses and activities from LEB2."}
+                </p>
+              </div>
+            ) : (
+              groupedCourses.map((course) => {
+                const isCourseDone = course.is_marked_done === 1;
+
+                return (
+                  <div
+                    key={course.id}
+                    onContextMenu={(e) => onCourseContextMenu(e, course)}
+                    className={`overflow-hidden rounded-xl border bg-white shadow-sm transition-all ${isCourseDone ? "border-slate-200 bg-slate-50/60 opacity-80" : "border-slate-200"
+                      }`}
+                  >
                   {/* Course Header: CPE333 Subject name */}
                   <div
                     className="flex items-center justify-between border-b border-slate-100 bg-[#fbfcfd] px-3.5 py-2.5 select-none cursor-pointer hover:bg-slate-50/90 transition-colors"
@@ -442,11 +598,10 @@ export function App() {
                           Course Done
                         </span>
                       ) : (
-                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium border ${
-                          course.unfinished_count > 0
-                            ? "bg-rose-50 text-rose-700 border-rose-200"
-                            : "bg-slate-100 text-slate-600 border-slate-200"
-                        }`}>
+                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium border ${course.unfinished_count > 0
+                          ? "bg-rose-50 text-rose-700 border-rose-200"
+                          : "bg-slate-100 text-slate-600 border-slate-200"
+                          }`}>
                           {course.unfinished_count > 0 ? `${course.unfinished_count} to do` : "0 to do"}
                         </span>
                       )}
@@ -455,11 +610,10 @@ export function App() {
                       <button
                         onClick={(e) => void handleToggleCourseDone(course.id, isCourseDone, e)}
                         title={isCourseDone ? "Mark course as active" : "Mark course as done"}
-                        className={`p-1 rounded transition-colors ${
-                          isCourseDone
-                            ? "text-teal-600 hover:bg-teal-50"
-                            : "text-slate-300 hover:text-slate-600 hover:bg-slate-100"
-                        }`}
+                        className={`p-1 rounded transition-colors ${isCourseDone
+                          ? "text-teal-600 hover:bg-teal-50"
+                          : "text-slate-300 hover:text-slate-600 hover:bg-slate-100"
+                          }`}
                       >
                         <svg className="h-4 w-4" fill={isCourseDone ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -485,16 +639,14 @@ export function App() {
                             key={item.id}
                             onContextMenu={(e) => onAssignmentContextMenu(e, item)}
                             onClick={() => handleOpenUrl(item.url)}
-                            className={`group flex items-start justify-between p-3 transition-colors select-none ${
-                              item.url ? "cursor-pointer hover:bg-sky-50/40" : ""
-                            } ${isDone ? "bg-slate-50/70" : ""}`}
+                            className={`group flex items-start justify-between p-3 transition-colors select-none ${item.url ? "cursor-pointer hover:bg-sky-50/40" : ""
+                              } ${isDone ? "bg-slate-50/70" : ""}`}
                           >
                             <div className="flex-1 pr-3 min-w-0">
                               {/* Title */}
                               <div className="flex items-center gap-1.5">
-                                <span className={`text-xs font-medium leading-snug line-clamp-2 ${
-                                  isDone ? "line-through text-slate-400" : "text-slate-800 group-hover:text-[#0088cc]"
-                                }`}>
+                                <span className={`text-xs font-medium leading-snug line-clamp-2 ${isDone ? "line-through text-slate-400" : "text-slate-800 group-hover:text-[#0088cc]"
+                                  }`}>
                                   {item.title}
                                 </span>
                               </div>
@@ -531,11 +683,10 @@ export function App() {
                                 )}
 
                                 {/* Due Date */}
-                                <span className={`text-[10px] ${
-                                  !isDone && !isSubmitted && item.due_at && item.due_at !== "No Due Date"
-                                    ? "text-rose-600 font-medium"
-                                    : "text-slate-500"
-                                }`}>
+                                <span className={`text-[10px] ${!isDone && !isSubmitted && item.due_at && item.due_at !== "No Due Date"
+                                  ? "text-rose-600 font-medium"
+                                  : "text-slate-500"
+                                  }`}>
                                   {item.due_at ? `Due: ${item.due_at}` : "No Due Date"}
                                 </span>
                               </div>
@@ -545,11 +696,10 @@ export function App() {
                             <button
                               onClick={(e) => void handleToggleAssignmentDone(item.id, isDone, e)}
                               title={isDone ? "Mark as not done" : "Mark as done"}
-                              className={`mt-0.5 p-1 rounded shrink-0 transition-colors ${
-                                isDone
-                                  ? "text-teal-600 hover:bg-teal-50"
-                                  : "text-slate-300 hover:text-teal-600 hover:bg-slate-100"
-                              }`}
+                              className={`mt-0.5 p-1 rounded shrink-0 transition-colors ${isDone
+                                ? "text-teal-600 hover:bg-teal-50"
+                                : "text-slate-300 hover:text-teal-600 hover:bg-slate-100"
+                                }`}
                             >
                               <svg className="h-4 w-4" fill={isDone ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
@@ -565,7 +715,8 @@ export function App() {
             })
           )}
         </div>
-      </main>
+      )}
+    </main>
 
       {/* Custom Right-Click Context Menu */}
       {contextMenu.visible && (
