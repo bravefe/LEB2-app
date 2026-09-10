@@ -1,13 +1,17 @@
 import { app, BrowserWindow } from "electron";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
+import { existsSync } from "node:fs";
 import { registerIpc } from "./ipc.js";
 
 let window: BrowserWindow | null = null;
 
 async function createWindow(): Promise<void> {
   window = new BrowserWindow({
-    width: 1280,
-    height: 800,
+    width: 440,
+    height: 760,
+    minWidth: 360,
+    minHeight: 560,
+    title: "LEB2 Work Checker",
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
@@ -24,7 +28,8 @@ async function createWindow(): Promise<void> {
 }
 
 app.whenReady().then(async () => {
-  const databasePath = join(app.getPath("userData"), "leb2.sqlite");
+  const localDb = resolve(".data/leb2.sqlite");
+  const databasePath = existsSync(localDb) ? localDb : join(app.getPath("userData"), "leb2.sqlite");
   registerIpc(databasePath);
   await createWindow();
   app.on("activate", () => { if (BrowserWindow.getAllWindows().length === 0) void createWindow(); });

@@ -164,86 +164,49 @@ If LEB2 uses client-side rendering, wait for the correct selectors before extrac
 
 After the scanner test works, build the Electron + React desktop interface.
 
-### Required screens
+### Required screens & Layout
 
-#### 1. Welcome / setup screen
+#### 1. Mobile-Like Vertical Window
+- Default window dimensions: **440px wide × 760px high** (resizable, minimum 360px × 560px).
+- Vertical scrollable single-column layout optimized for quick mobile-like desktop widget glancing.
+- Styled to closely match the authentic LEB2 app design (referenced from `docs/html-samples/hidden/activity-page.html`):
+  - Clean top brand navigation bar with LEB2 logo badge and live connection indicator.
+  - Authentic LEB2 status badges: green (`Submitted`), coral/red (`Not Submitted`), amber (`Late`), and teal (`Marked Done`).
+  - Assignment type pills: `Individual` / `Group`.
 
-Show this on first launch:
+#### 2. Top Summary & Actions
+- Prominently displays primary metrics at the top:
+  - **Not Submitted: {count}** (counts unsubmitted, non-done assignments)
+  - **Total Courses: {count}** (total enrolled courses)
+- Prominent **Scan** button with loading spinner during scan operations.
+- **Last scan date and time** placed directly below the Scan button (e.g., `Last scan: Sep 10, 2026 at 14:35`).
+- Feedback and error alerts displayed via dismissible inline toast banners.
 
-- App name: **LEB2 Work Checker**
-- Short explanation of what the app does
-- Button: **Sign in to LEB2**
-- Button: **Test connection**
-- Login/session status
-- Privacy message saying login data stays on the user’s computer
+#### 3. Filter Toggle
+- Segmented control to switch between:
+  - **Not Submitted ({count})**: Default view on open; only shows active, uncompleted assignments that are not marked as done.
+  - **All Work ({count})**: Shows all assignments (submitted, late, not submitted, and marked as done).
 
-#### 2. Dashboard
+#### 4. Course-Grouped Assignment List
+- Hierarchical display grouped by course:
+  - Course Header: `[Course Code] [Subject Name]` (e.g., `CPE 333 OPERATING SYSTEMS`), section pill (e.g., `Section 31`), and remaining to-do badge.
+  - Under each course: list of assignments belonging to that course:
+    - Assignment title (clickable to open in LEB2).
+    - Status badge (`Not Submitted`, `Submitted`, `Late`, `Marked Done`).
+    - Assignment type tag (`Individual` / `Group`).
+    - Due date (e.g., `Due: September 10, 2026 at 17:30`), with warning highlight for pending/overdue deadlines.
+    - Quick checkmark toggle button for instant mark-as-done without opening context menu.
 
-Show a summary at the top:
-
-- Total unfinished work
-- Overdue work
-- Due today
-- Due this week
-- Last scan time
-- Button: **Scan now**
-
-Show assignment cards or rows below.
-
-Each assignment must display:
-
-- Assignment title
-- Course/class name
-- Status
-- Due date, if available
-- Relative deadline, for example: `Due in 2 days`
-- Activity type, if available
-- Button: **Open in LEB2**
-- Button: **Mark as hidden** for items the user does not want to see
-
-#### 3. Assignment list
-
-Provide filters for:
-
-- All
-- Unfinished
-- Overdue
-- Due today
-- Due this week
-- Submitted
-- Completed
-- Unknown status
-
-Provide sorting for:
-
-- Due date ascending
-- Due date descending
-- Course name
-- Recently discovered
-
-#### 4. Courses page
-
-Show every discovered course:
-
-- Course name
-- Course URL
-- Number of unfinished items
-- Last scan time
-- Button to scan only that course
-- Button to open the course in LEB2
-
-#### 5. Settings page
-
-Include:
-
-- Scan interval: every 1 hour, 3 hours, 6 hours, 12 hours, daily, or manual only
-- Notification reminder times
-- Toggle for overdue notifications
-- Toggle for due-today notifications
-- Button to clear saved session and sign out
-- Button to export assignment data as JSON
-- Debug mode toggle
-- Display local database path only if appropriate for development mode
+#### 5. "Mark as Done" Context Menu
+- Right-clicking an assignment row opens a custom context menu:
+  - **Mark as Done** / **Mark as Undone**: Toggles the assignment's completion status.
+  - **Open in LEB2**: Opens the activity URL in the user's default browser.
+  - When marked as done, the assignment immediately disappears from the default "Not Submitted" view and displays with a "Marked Done" badge in "All Work".
+- Right-clicking a course header opens a course context menu:
+  - **Mark Course as Done** / **Mark Course as Undone**: Toggles course-level completion status.
+  - **Mark All in Course as Done**: Sets all assignments within the course to done.
+  - **Open Course Page**: Opens the LEB2 class page in the browser.
+- "Mark as Done" states are persisted in the SQLite database (`assignments` and `courses` tables) across app launches and scans.
 
 ---
 

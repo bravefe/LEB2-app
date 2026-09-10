@@ -9,5 +9,7 @@ export function openDatabase(databasePath = ".data/leb2.sqlite"): Database.Datab
   const database = new Database(resolvedPath);
   database.pragma("foreign_keys = ON");
   database.exec(readFileSync(new URL("./schema.sql", import.meta.url), "utf8"));
+  try { database.exec("ALTER TABLE courses ADD COLUMN is_marked_done INTEGER NOT NULL DEFAULT 0;"); } catch {}
+  try { database.exec("ALTER TABLE assignments ADD COLUMN is_marked_done INTEGER NOT NULL DEFAULT 0;"); } catch {}
   return database;
 }

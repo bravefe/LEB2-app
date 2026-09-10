@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS courses (
   code TEXT,
   section TEXT,
   url TEXT NOT NULL UNIQUE,
+  is_marked_done INTEGER NOT NULL DEFAULT 0,
   last_scanned_at TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
@@ -25,6 +26,7 @@ CREATE TABLE IF NOT EXISTS assignments (
   attachment_text TEXT,
   raw_text TEXT NOT NULL,
   is_hidden INTEGER NOT NULL DEFAULT 0,
+  is_marked_done INTEGER NOT NULL DEFAULT 0,
   source_hash TEXT,
   first_seen_at TEXT NOT NULL,
   last_seen_at TEXT NOT NULL,
