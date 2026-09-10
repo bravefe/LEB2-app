@@ -29,7 +29,7 @@
       "dist/**/*",
       "dist-electron/**/*",
       "database/**/*",
-      "release/.icon-ico/icon.ico",
+      "icon.ico",
       "package.json"
     ],
     "win": {
@@ -41,12 +41,12 @@
           ]
         }
       ],
-      "icon": "release/.icon-ico/icon.ico"
+      "icon": "icon.ico"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "release/.icon-ico/icon.ico"
+      "installerIcon": "icon.ico"
     }
   },
   "dependencies": {

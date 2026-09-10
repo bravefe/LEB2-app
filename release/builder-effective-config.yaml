@@ -8,16 +8,16 @@ files:
       - dist/**/*
       - dist-electron/**/*
       - database/**/*
-      - release/.icon-ico/icon.ico
+      - icon.ico
       - package.json
 win:
   target:
     - target: nsis
       arch:
         - x64
-  icon: release/.icon-ico/icon.ico
+  icon: icon.ico
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
-  installerIcon: release/.icon-ico/icon.ico
+  installerIcon: icon.ico
 electronVersion: 44.3.0
