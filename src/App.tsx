@@ -284,7 +284,7 @@ export function App() {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f0f2f5] text-slate-800 antialiased selection:bg-sky-500 selection:text-white">
-      {/* LEB2 Top Brand Navigation Bar */}
+      {/* LEB2 Top Brand Navigation Bar
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-[#202934] bg-[#242e39] px-4 py-2.5 text-white shadow-sm">
         <div className="flex items-center space-x-2.5">
           <div className="flex h-7 w-7 items-center justify-center rounded bg-gradient-to-tr from-[#0088cc] to-[#00b0ff] font-bold text-white shadow">
@@ -301,7 +301,7 @@ export function App() {
             Connected
           </span>
         </div>
-      </header>
+      </header> */}
 
       {/* Main Container - Compact Mobile Vertical List */}
       <main className="flex-1 px-3.5 py-3 space-y-3 max-w-lg mx-auto w-full">
@@ -372,31 +372,28 @@ export function App() {
           <div className="inline-flex rounded-lg bg-slate-200/80 p-0.5 text-xs font-medium text-slate-600 shadow-inner w-full">
             <button
               onClick={() => setTabView("not_submitted")}
-              className={`flex-1 rounded-md px-2 py-1.5 transition-all text-center ${
-                tabView === "not_submitted"
+              className={`flex-1 rounded-md px-2 py-1.5 transition-all text-center ${tabView === "not_submitted"
                   ? "bg-white font-semibold text-slate-900 shadow-sm"
                   : "text-slate-600 hover:text-slate-900"
-              }`}
+                }`}
             >
               Not Submitted ({notSubmittedCount})
             </button>
             <button
               onClick={() => setTabView("due_date")}
-              className={`flex-1 rounded-md px-2 py-1.5 transition-all text-center ${
-                tabView === "due_date"
+              className={`flex-1 rounded-md px-2 py-1.5 transition-all text-center ${tabView === "due_date"
                   ? "bg-white font-semibold text-slate-900 shadow-sm"
                   : "text-slate-600 hover:text-slate-900"
-              }`}
+                }`}
             >
               By Due Date ({dueDateAssignments.length})
             </button>
             <button
               onClick={() => setTabView("all")}
-              className={`flex-1 rounded-md px-2 py-1.5 transition-all text-center ${
-                tabView === "all"
+              className={`flex-1 rounded-md px-2 py-1.5 transition-all text-center ${tabView === "all"
                   ? "bg-white font-semibold text-slate-900 shadow-sm"
                   : "text-slate-600 hover:text-slate-900"
-              }`}
+                }`}
             >
               All Work ({assignments.length})
             </button>
@@ -447,9 +444,8 @@ export function App() {
                     key={item.id}
                     onContextMenu={(e) => onAssignmentContextMenu(e, item)}
                     onClick={() => handleOpenUrl(item.url)}
-                    className={`group overflow-hidden rounded-xl border bg-white p-3 shadow-sm transition-all select-none ${
-                      item.url ? "cursor-pointer hover:border-sky-300 hover:shadow-md" : ""
-                    } ${isDone ? "border-slate-200 bg-slate-50/70 opacity-75" : overdue ? "border-rose-200/90" : "border-slate-200"}`}
+                    className={`group overflow-hidden rounded-xl border bg-white p-3 shadow-sm transition-all select-none ${item.url ? "cursor-pointer hover:border-sky-300 hover:shadow-md" : ""
+                      } ${isDone ? "border-slate-200 bg-slate-50/70 opacity-75" : overdue ? "border-rose-200/90" : "border-slate-200"}`}
                   >
                     {/* Top row: Course Info & Overdue Indicator */}
                     <div className="flex items-center justify-between gap-1.5 pb-1.5 border-b border-slate-100">
@@ -475,9 +471,8 @@ export function App() {
                     {/* Middle: Title & Done button */}
                     <div className="flex items-start justify-between gap-2 pt-2">
                       <div className="flex-1 min-w-0">
-                        <span className={`text-xs font-semibold leading-snug line-clamp-2 ${
-                          isDone ? "line-through text-slate-400" : "text-slate-800 group-hover:text-[#0088cc]"
-                        }`}>
+                        <span className={`text-xs font-semibold leading-snug line-clamp-2 ${isDone ? "line-through text-slate-400" : "text-slate-800 group-hover:text-[#0088cc]"
+                          }`}>
                           {item.title}
                         </span>
                       </div>
@@ -486,11 +481,10 @@ export function App() {
                       <button
                         onClick={(e) => void handleToggleAssignmentDone(item.id, isDone, e)}
                         title={isDone ? "Mark as not done" : "Mark as done"}
-                        className={`p-1 rounded shrink-0 transition-colors ${
-                          isDone
+                        className={`p-1 rounded shrink-0 transition-colors ${isDone
                             ? "text-teal-600 hover:bg-teal-50"
                             : "text-slate-300 hover:text-teal-600 hover:bg-slate-100"
-                        }`}
+                          }`}
                       >
                         <svg className="h-4 w-4" fill={isDone ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
@@ -569,154 +563,154 @@ export function App() {
                     className={`overflow-hidden rounded-xl border bg-white shadow-sm transition-all ${isCourseDone ? "border-slate-200 bg-slate-50/60 opacity-80" : "border-slate-200"
                       }`}
                   >
-                  {/* Course Header: CPE333 Subject name */}
-                  <div
-                    className="flex items-center justify-between border-b border-slate-100 bg-[#fbfcfd] px-3.5 py-2.5 select-none cursor-pointer hover:bg-slate-50/90 transition-colors"
-                    title="Right-click for course options"
-                  >
-                    <div className="flex-1 pr-2 min-w-0">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        {course.code && (
-                          <span className="font-bold text-xs tracking-tight text-sky-700">
-                            {course.code}
+                    {/* Course Header: CPE333 Subject name */}
+                    <div
+                      className="flex items-center justify-between border-b border-slate-100 bg-[#fbfcfd] px-3.5 py-2.5 select-none cursor-pointer hover:bg-slate-50/90 transition-colors"
+                      title="Right-click for course options"
+                    >
+                      <div className="flex-1 pr-2 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {course.code && (
+                            <span className="font-bold text-xs tracking-tight text-sky-700">
+                              {course.code}
+                            </span>
+                          )}
+                          <span className="text-xs font-semibold text-slate-800 truncate">
+                            {course.name}
+                          </span>
+                        </div>
+                        {course.section && (
+                          <span className="text-[10px] text-slate-400 font-normal">
+                            Section {course.section}
                           </span>
                         )}
-                        <span className="text-xs font-semibold text-slate-800 truncate">
-                          {course.name}
-                        </span>
                       </div>
-                      {course.section && (
-                        <span className="text-[10px] text-slate-400 font-normal">
-                          Section {course.section}
-                        </span>
-                      )}
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {isCourseDone ? (
+                          <span className="inline-flex items-center rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-medium text-teal-700 border border-teal-200">
+                            Course Done
+                          </span>
+                        ) : (
+                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium border ${course.unfinished_count > 0
+                            ? "bg-rose-50 text-rose-700 border-rose-200"
+                            : "bg-slate-100 text-slate-600 border-slate-200"
+                            }`}>
+                            {course.unfinished_count > 0 ? `${course.unfinished_count} to do` : "0 to do"}
+                          </span>
+                        )}
+
+                        {/* Quick mark course done toggle */}
+                        <button
+                          onClick={(e) => void handleToggleCourseDone(course.id, isCourseDone, e)}
+                          title={isCourseDone ? "Mark course as active" : "Mark course as done"}
+                          className={`p-1 rounded transition-colors ${isCourseDone
+                            ? "text-teal-600 hover:bg-teal-50"
+                            : "text-slate-300 hover:text-slate-600 hover:bg-slate-100"
+                            }`}
+                        >
+                          <svg className="h-4 w-4" fill={isCourseDone ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      {isCourseDone ? (
-                        <span className="inline-flex items-center rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-medium text-teal-700 border border-teal-200">
-                          Course Done
-                        </span>
+                    {/* Course Assignments */}
+                    <div className="divide-y divide-slate-100">
+                      {course.items.length === 0 ? (
+                        <div className="py-2.5 px-3.5 text-[11px] text-slate-400 italic">
+                          No pending work in this course
+                        </div>
                       ) : (
-                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium border ${course.unfinished_count > 0
-                          ? "bg-rose-50 text-rose-700 border-rose-200"
-                          : "bg-slate-100 text-slate-600 border-slate-200"
-                          }`}>
-                          {course.unfinished_count > 0 ? `${course.unfinished_count} to do` : "0 to do"}
-                        </span>
-                      )}
+                        course.items.map((item) => {
+                          const isDone = item.is_marked_done === 1 || course.is_marked_done === 1;
+                          const isSubmitted = item.status === "submitted";
+                          const isLate = item.status === "late";
 
-                      {/* Quick mark course done toggle */}
-                      <button
-                        onClick={(e) => void handleToggleCourseDone(course.id, isCourseDone, e)}
-                        title={isCourseDone ? "Mark course as active" : "Mark course as done"}
-                        className={`p-1 rounded transition-colors ${isCourseDone
-                          ? "text-teal-600 hover:bg-teal-50"
-                          : "text-slate-300 hover:text-slate-600 hover:bg-slate-100"
-                          }`}
-                      >
-                        <svg className="h-4 w-4" fill={isCourseDone ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </button>
+                          return (
+                            <div
+                              key={item.id}
+                              onContextMenu={(e) => onAssignmentContextMenu(e, item)}
+                              onClick={() => handleOpenUrl(item.url)}
+                              className={`group flex items-start justify-between p-3 transition-colors select-none ${item.url ? "cursor-pointer hover:bg-sky-50/40" : ""
+                                } ${isDone ? "bg-slate-50/70" : ""}`}
+                            >
+                              <div className="flex-1 pr-3 min-w-0">
+                                {/* Title */}
+                                <div className="flex items-center gap-1.5">
+                                  <span className={`text-xs font-medium leading-snug line-clamp-2 ${isDone ? "line-through text-slate-400" : "text-slate-800 group-hover:text-[#0088cc]"
+                                    }`}>
+                                    {item.title}
+                                  </span>
+                                </div>
+
+                                {/* Details: Status Badge & Due Date */}
+                                <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                                  {/* LEB2-style status badge */}
+                                  {isDone ? (
+                                    <span className="inline-flex items-center gap-1 rounded bg-teal-100 px-1.5 py-0.5 text-[10px] font-semibold text-teal-800">
+                                      <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                                      </svg>
+                                      Marked Done
+                                    </span>
+                                  ) : isSubmitted ? (
+                                    <span className="inline-flex items-center rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-800">
+                                      Submitted
+                                    </span>
+                                  ) : isLate ? (
+                                    <span className="inline-flex items-center rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">
+                                      Late
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center rounded bg-rose-100 px-1.5 py-0.5 text-[10px] font-semibold text-rose-800">
+                                      Not Submitted
+                                    </span>
+                                  )}
+
+                                  {/* Assignment Type (Individual / Group) */}
+                                  {item.assignment_type && (
+                                    <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500 border border-slate-200/80">
+                                      {item.assignment_type}
+                                    </span>
+                                  )}
+
+                                  {/* Due Date */}
+                                  <span className={`text-[10px] ${!isDone && !isSubmitted && item.due_at && item.due_at !== "No Due Date"
+                                    ? "text-rose-600 font-medium"
+                                    : "text-slate-500"
+                                    }`}>
+                                    {item.due_at ? `Due: ${item.due_at}` : "No Due Date"}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Quick Toggle Done Button */}
+                              <button
+                                onClick={(e) => void handleToggleAssignmentDone(item.id, isDone, e)}
+                                title={isDone ? "Mark as not done" : "Mark as done"}
+                                className={`mt-0.5 p-1 rounded shrink-0 transition-colors ${isDone
+                                  ? "text-teal-600 hover:bg-teal-50"
+                                  : "text-slate-300 hover:text-teal-600 hover:bg-slate-100"
+                                  }`}
+                              >
+                                <svg className="h-4 w-4" fill={isDone ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                              </button>
+                            </div>
+                          );
+                        })
+                      )}
                     </div>
                   </div>
-
-                  {/* Course Assignments */}
-                  <div className="divide-y divide-slate-100">
-                    {course.items.length === 0 ? (
-                      <div className="py-2.5 px-3.5 text-[11px] text-slate-400 italic">
-                        No pending work in this course
-                      </div>
-                    ) : (
-                      course.items.map((item) => {
-                        const isDone = item.is_marked_done === 1 || course.is_marked_done === 1;
-                        const isSubmitted = item.status === "submitted";
-                        const isLate = item.status === "late";
-
-                        return (
-                          <div
-                            key={item.id}
-                            onContextMenu={(e) => onAssignmentContextMenu(e, item)}
-                            onClick={() => handleOpenUrl(item.url)}
-                            className={`group flex items-start justify-between p-3 transition-colors select-none ${item.url ? "cursor-pointer hover:bg-sky-50/40" : ""
-                              } ${isDone ? "bg-slate-50/70" : ""}`}
-                          >
-                            <div className="flex-1 pr-3 min-w-0">
-                              {/* Title */}
-                              <div className="flex items-center gap-1.5">
-                                <span className={`text-xs font-medium leading-snug line-clamp-2 ${isDone ? "line-through text-slate-400" : "text-slate-800 group-hover:text-[#0088cc]"
-                                  }`}>
-                                  {item.title}
-                                </span>
-                              </div>
-
-                              {/* Details: Status Badge & Due Date */}
-                              <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                                {/* LEB2-style status badge */}
-                                {isDone ? (
-                                  <span className="inline-flex items-center gap-1 rounded bg-teal-100 px-1.5 py-0.5 text-[10px] font-semibold text-teal-800">
-                                    <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Marked Done
-                                  </span>
-                                ) : isSubmitted ? (
-                                  <span className="inline-flex items-center rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-800">
-                                    Submitted
-                                  </span>
-                                ) : isLate ? (
-                                  <span className="inline-flex items-center rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">
-                                    Late
-                                  </span>
-                                ) : (
-                                  <span className="inline-flex items-center rounded bg-rose-100 px-1.5 py-0.5 text-[10px] font-semibold text-rose-800">
-                                    Not Submitted
-                                  </span>
-                                )}
-
-                                {/* Assignment Type (Individual / Group) */}
-                                {item.assignment_type && (
-                                  <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500 border border-slate-200/80">
-                                    {item.assignment_type}
-                                  </span>
-                                )}
-
-                                {/* Due Date */}
-                                <span className={`text-[10px] ${!isDone && !isSubmitted && item.due_at && item.due_at !== "No Due Date"
-                                  ? "text-rose-600 font-medium"
-                                  : "text-slate-500"
-                                  }`}>
-                                  {item.due_at ? `Due: ${item.due_at}` : "No Due Date"}
-                                </span>
-                              </div>
-                            </div>
-
-                            {/* Quick Toggle Done Button */}
-                            <button
-                              onClick={(e) => void handleToggleAssignmentDone(item.id, isDone, e)}
-                              title={isDone ? "Mark as not done" : "Mark as done"}
-                              className={`mt-0.5 p-1 rounded shrink-0 transition-colors ${isDone
-                                ? "text-teal-600 hover:bg-teal-50"
-                                : "text-slate-300 hover:text-teal-600 hover:bg-slate-100"
-                                }`}
-                            >
-                              <svg className="h-4 w-4" fill={isDone ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                              </svg>
-                            </button>
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-      )}
-    </main>
+                );
+              })
+            )}
+          </div>
+        )}
+      </main>
 
       {/* Custom Right-Click Context Menu */}
       {contextMenu.visible && (
