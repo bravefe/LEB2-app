@@ -11,7 +11,7 @@ async function createWindow(): Promise<void> {
     height: 760,
     minWidth: 360,
     minHeight: 560,
-    icon: "../logo.png",
+    icon: join(app.getAppPath(), "logo.png"),
     title: "LEB2 Work Checker",
     webPreferences: {
       contextIsolation: true,
