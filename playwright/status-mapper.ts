@@ -15,4 +15,4 @@ export function mapStatus(rawText: string | null): AssignmentStatus {
   return "not submitted";
 }
 
-export const unfinishedStatuses: AssignmentStatus[] = ["not submitted", "late"];
+export const unfinishedStatuses: AssignmentStatus[] = ["not submitted"];

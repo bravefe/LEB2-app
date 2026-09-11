@@ -3,7 +3,7 @@ import type Database from "better-sqlite3";
 export function listCourses(database: Database.Database): unknown[] {
   return database.prepare(`
     SELECT c.*, COUNT(a.id) AS assignment_count,
-      SUM(CASE WHEN a.status IN ('not submitted', 'late') AND a.is_marked_done = 0 AND c.is_marked_done = 0 THEN 1 ELSE 0 END) AS unfinished_count
+      SUM(CASE WHEN a.status = 'not submitted' AND a.is_marked_done = 0 AND c.is_marked_done = 0 THEN 1 ELSE 0 END) AS unfinished_count
     FROM courses c
     LEFT JOIN assignments a ON a.course_id = c.id AND a.is_hidden = 0
     GROUP BY c.id

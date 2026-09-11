@@ -189,7 +189,7 @@ export function App() {
 
   const notSubmittedAssignments = assignments.filter((item) => {
     const isDone = item.is_marked_done === 1 || item.course_is_marked_done === 1;
-    const isUnfinished = ["not submitted", "late"].includes(item.status);
+    const isUnfinished = item.status === "not submitted";
     return isUnfinished && !isDone;
   });
 
@@ -200,7 +200,7 @@ export function App() {
     const isDone = item.is_marked_done === 1 || item.course_is_marked_done === 1;
     if (tabView === "all") return true;
 
-    const isUnfinished = ["not submitted"].includes(item.status);
+    const isUnfinished = item.status === "not submitted";
     return isUnfinished && !isDone;
   });
 

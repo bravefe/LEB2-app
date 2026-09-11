@@ -96,8 +96,7 @@ export function CourseList({
                 ) : (
                   course.items.map((item) => {
                     const isDone = item.is_marked_done === 1 || course.is_marked_done === 1;
-                    const isSubmitted = item.status === "submitted";
-                    const isLate = item.status === "late";
+                    const isSubmitted = item.status === "submitted" || item.status === "late";
 
                     return (
                       <div
@@ -127,13 +126,13 @@ export function CourseList({
                                 </svg>
                                 Marked Done
                               </span>
+                            ) : item.status === "late" ? (
+                              <span className="inline-flex items-center rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">
+                                Late
+                              </span>
                             ) : isSubmitted ? (
                               <span className="inline-flex items-center rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-800">
                                 Submitted
-                              </span>
-                            ) : isLate ? (
-                              <span className="inline-flex items-center rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">
-                                Late
                               </span>
                             ) : (
                               <span className="inline-flex items-center rounded bg-rose-100 px-1.5 py-0.5 text-[10px] font-semibold text-rose-800">
