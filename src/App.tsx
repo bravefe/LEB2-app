@@ -200,7 +200,7 @@ export function App() {
     const isDone = item.is_marked_done === 1 || item.course_is_marked_done === 1;
     if (tabView === "all") return true;
 
-    const isUnfinished = ["not submitted", "late"].includes(item.status);
+    const isUnfinished = ["not submitted"].includes(item.status);
     return isUnfinished && !isDone;
   });
 
